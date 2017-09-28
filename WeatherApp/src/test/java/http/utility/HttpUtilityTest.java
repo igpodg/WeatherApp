@@ -4,15 +4,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class HttpUtilityTest {
-    private static int HTTP_CODE_SUCCESS = 200;
+    private final static int HTTP_CODE_SUCCESS = 200;
 
     @BeforeClass
     public static void setUpAllTests() {
@@ -25,14 +22,37 @@ public class HttpUtilityTest {
     }
 
     @Test
+    public void testHttpConnectionReturnNull() {
+        try {
+            String url = "https://example.com/";
+            HttpURLConnection con = HttpUtility.makeUrlConnection(url);
+            assertNotNull(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
     // Test actual connection to http
     public void testHttpSuccessfulConnection() {
         try {
-            String url = "";
+            String url = "https://www.example.com/";
             HttpURLConnection con = HttpUtility.makeUrlConnection(url);
-            assertNotNull(con);
             assertEquals(con.getResponseCode(), HTTP_CODE_SUCCESS);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testHttpBadConnection() {
+        try {
+            String url = "aaaaa://website.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/";
+            HttpURLConnection con = HttpUtility.makeUrlConnection(url);
+            assertNotEquals(con.getResponseCode(), HTTP_CODE_SUCCESS);
+        } catch (Exception e) {
             e.printStackTrace();
             fail();
         }
@@ -41,8 +61,40 @@ public class HttpUtilityTest {
     @Test
     public void testMakeGetRequest() {
         try {
-            String url = "";
-            HttpUtility.makeGetRequest(url);
+            String url = "https://example.com/";
+            HttpURLConnection con = HttpUtility.makeUrlConnection(url);
+            HttpUtility.makeGetRequest(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testCorrectString() {
+        try {
+            String url = "https://www.le.ac.uk/oerresources/bdra/html/resources/example.txt";
+            HttpURLConnection con = HttpUtility.makeUrlConnection(url);
+            HttpUtility.makeGetRequest(con);
+            String result = HttpUtility.putDataToString(con);
+            assertEquals(result, "\nThis is an example of a simple ASCII text file stored on a Web server. " +
+                    "Note that it has a file\nextension of \".txt\".\n\nAlthough such files may contains some basic " +
+                    "layout formatting, such as paragraphs, there is no\nsupport for the text to have attributes, " +
+                    "such as bolding.\n\nText files can contain Hypertext Mark-up codes but these will not be " +
+                    "interpreted by the \nbrowser. For example, if the following characters <strong>hello</strong> " +
+                    "were typed into an\n\"html\" file then the word \"hello\" would be shown in bold.\n\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testConnectionClose() {
+        try {
+            String url = "https://example.com/";
+            HttpURLConnection con = HttpUtility.makeUrlConnection(url);
+            HttpUtility.closeUrlConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
             fail();

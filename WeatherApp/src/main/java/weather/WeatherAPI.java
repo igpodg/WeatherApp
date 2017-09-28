@@ -1,9 +1,7 @@
 package weather;
 
-import http.utility.HttpUtility;
-
 public class WeatherAPI {
-    private HttpUtility httpUtil;
+    private String apiKey;
 
     public enum dayOfWeek {
         TOMORROW,
@@ -11,8 +9,8 @@ public class WeatherAPI {
         AFTER_AFTER_TOMORROW
     }
 
-    public WeatherAPI() {
-        httpUtil = new HttpUtility();
+    public WeatherAPI(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     public double getCurrentTemperature() {
