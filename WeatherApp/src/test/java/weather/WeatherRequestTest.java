@@ -11,9 +11,9 @@ import java.net.HttpURLConnection;
 
 import static org.junit.Assert.*;
 
-public class WeatherAPITest {
-    private static int HTTP_CODE_SUCCESS = 200;
-    private static WeatherAPI api;
+public class WeatherRequestTest {
+    private final static int HTTP_CODE_SUCCESS = 200;
+    private static WeatherRequest request;
 
     @BeforeClass
     public static void setUpAllTests() {
@@ -23,7 +23,7 @@ public class WeatherAPITest {
     @Before
     public void setUpTest() {
         // before each test
-        api = new WeatherAPI();
+        request = new WeatherRequest("", WeatherRequest.temperatureFormat.CELSIUS);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class WeatherAPITest {
             }
             in.close();
 
-            assertEquals(response.toString(), String.format("%.1f C", api.getCurrentTemperature()));
+            assertEquals(response.toString(), String.format("%.1f C", request.getCurrentTemperature()));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -74,7 +74,8 @@ public class WeatherAPITest {
             in.close();
 
             assertEquals(response.toString(),
-                    String.format("%.1f C", api.getHighestTemperature(WeatherAPI.dayOfWeek.TOMORROW)));
+                    String.format("%.1f C",
+                            request.getHighestTemperature(WeatherRequest.dayOfWeek.TOMORROW)));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -102,7 +103,8 @@ public class WeatherAPITest {
             in.close();
 
             assertEquals(response.toString(),
-                    String.format("%.1f C", api.getLowestTemperature(WeatherAPI.dayOfWeek.AFTER_AFTER_TOMORROW)));
+                    String.format("%.1f C",
+                            request.getLowestTemperature(WeatherRequest.dayOfWeek.TOMORROW)));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -111,21 +113,38 @@ public class WeatherAPITest {
 
     @Test
     public void testNullGeoCoordinates() {
-        assertNotNull(api.getGeoCoordinates());
+        assertNotNull(request.getGeoCoordinates());
     }
 
     @Test
     public void testCorrectFormatGeoCoordinates() {
-        String coords = api.getGeoCoordinates();
+        String coords = request.getGeoCoordinates();
         assertNotNull(coords);
-        assertEquals(coords.length(), "xxx:yyy".length());
+        assertEquals(coords.length(), "x.xxxx:y.yyyy".length());
 
-        assertTrue(Character.isDigit(coords.charAt(0)));
-        assertTrue(Character.isDigit(coords.charAt(1)));
-        assertTrue(Character.isDigit(coords.charAt(2)));
-        assertEquals(coords.charAt(3), ':');
-        assertTrue(Character.isDigit(coords.charAt(4)));
-        assertTrue(Character.isDigit(coords.charAt(5)));
-        assertTrue(Character.isDigit(coords.charAt(6)));
+        assertEquals(coords.charAt(1), '.');
+        assertEquals(coords.charAt(6), ':');
+        assertEquals(coords.charAt(8), '.');
+
+        try {
+            Double.parseDouble(coords.substring(0, 6));
+            Double.parseDouble(coords.substring(7));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testSetFormat() {
+        try {
+            WeatherRequest request = new WeatherRequest("", WeatherRequest.temperatureFormat.CELSIUS);
+            request.setTemperatureFormat(WeatherRequest.temperatureFormat.FAHRENHEIT);
+            request.setTemperatureFormat(WeatherRequest.temperatureFormat.CELSIUS);
+            request.setTemperatureFormat(WeatherRequest.temperatureFormat.FAHRENHEIT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 }
