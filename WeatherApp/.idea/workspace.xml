@@ -77,16 +77,16 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WeatherRequest.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="WeatherRequest.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/weather/WeatherRequest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="680">
-              <caret line="40" column="18" lean-forward="true" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="18" />
+            <state relative-caret-position="408">
+              <caret line="24" column="68" lean-forward="true" selection-start-line="24" selection-start-column="68" selection-end-line="24" selection-end-column="68" />
               <folding>
-                <element signature="e#648#649#0" expanded="true" />
-                <element signature="e#725#726#0" expanded="true" />
-                <element signature="e#917#918#0" expanded="true" />
-                <element signature="e#993#994#0" expanded="true" />
+                <element signature="e#933#934#0" expanded="true" />
+                <element signature="e#1010#1011#0" expanded="true" />
+                <element signature="e#1202#1203#0" expanded="true" />
+                <element signature="e#1278#1279#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -131,11 +131,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WeatherRequestTest.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="WeatherRequestTest.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/weather/WeatherRequestTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2193">
-              <caret line="129" column="55" lean-forward="true" selection-start-line="129" selection-start-column="55" selection-end-line="129" selection-end-column="55" />
+            <state relative-caret-position="492">
+              <caret line="148" column="5" lean-forward="false" selection-start-line="148" selection-start-column="5" selection-end-line="148" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3649#3650#0" expanded="true" />
@@ -491,7 +491,6 @@
         <option value="$PROJECT_DIR$/src/main/java/json/utility/JsonValidator.java" />
         <option value="$PROJECT_DIR$/src/test/java/weather/WeatherAPITest.java" />
         <option value="$PROJECT_DIR$/src/main/java/weather/WeatherAPI.java" />
-        <option value="$PROJECT_DIR$/src/main/java/weather/WeatherRequest.java" />
         <option value="$PROJECT_DIR$/src/main/java/weather/WeatherFormatter.java" />
         <option value="$PROJECT_DIR$/src/main/java/weather/CountrySelector.java" />
         <option value="$PROJECT_DIR$/src/main/java/weather/CountryFormatter.java" />
@@ -502,6 +501,7 @@
         <option value="$PROJECT_DIR$/src/main/java/json/JsonObject.java" />
         <option value="$PROJECT_DIR$/src/test/java/country/CountryFormatterTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/json/JsonValidator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/weather/WeatherRequest.java" />
         <option value="$PROJECT_DIR$/src/test/java/weather/WeatherRequestTest.java" />
       </list>
     </option>
@@ -512,7 +512,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="483" />
     <option name="y" value="52" />
     <option name="width" value="1322" />
@@ -939,7 +939,7 @@
     <option name="totallyTimeSpent" value="2698000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1065,10 +1065,10 @@
         <state relative-caret-position="255">
           <caret line="20" column="10" lean-forward="false" selection-start-line="20" selection-start-column="10" selection-end-line="20" selection-end-column="10" />
           <folding>
-            <element signature="e#648#649#0" expanded="true" />
-            <element signature="e#725#726#0" expanded="true" />
-            <element signature="e#917#918#0" expanded="true" />
-            <element signature="e#993#994#0" expanded="true" />
+            <element signature="e#933#934#0" expanded="true" />
+            <element signature="e#1010#1011#0" expanded="true" />
+            <element signature="e#1202#1203#0" expanded="true" />
+            <element signature="e#1278#1279#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1134,10 +1134,10 @@
         <state relative-caret-position="323">
           <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
           <folding>
-            <element signature="e#648#649#0" expanded="true" />
-            <element signature="e#725#726#0" expanded="true" />
-            <element signature="e#917#918#0" expanded="true" />
-            <element signature="e#993#994#0" expanded="true" />
+            <element signature="e#933#934#0" expanded="true" />
+            <element signature="e#1010#1011#0" expanded="true" />
+            <element signature="e#1202#1203#0" expanded="true" />
+            <element signature="e#1278#1279#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1262,27 +1262,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/weather/WeatherRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="40" column="18" lean-forward="true" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="18" />
-          <folding>
-            <element signature="e#648#649#0" expanded="true" />
-            <element signature="e#725#726#0" expanded="true" />
-            <element signature="e#917#918#0" expanded="true" />
-            <element signature="e#993#994#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/weather/WeatherRequestTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2193">
-          <caret line="129" column="55" lean-forward="true" selection-start-line="129" selection-start-column="55" selection-end-line="129" selection-end-column="55" />
+        <state relative-caret-position="492">
+          <caret line="148" column="5" lean-forward="false" selection-start-line="148" selection-start-column="5" selection-end-line="148" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3649#3650#0" expanded="true" />
             <element signature="e#3707#3708#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/weather/WeatherRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" column="68" lean-forward="true" selection-start-line="24" selection-start-column="68" selection-end-line="24" selection-end-column="68" />
+          <folding>
+            <element signature="e#933#934#0" expanded="true" />
+            <element signature="e#1010#1011#0" expanded="true" />
+            <element signature="e#1202#1203#0" expanded="true" />
+            <element signature="e#1278#1279#0" expanded="true" />
           </folding>
         </state>
       </provider>

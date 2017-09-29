@@ -21,6 +21,14 @@ public class WeatherRequest {
         this.format = defaultFormat;
     }
 
+    private static double convertToFahrenheit(double celsiusTemp) {
+        throw new RuntimeException("Cannot convert to Fahrenheit!");
+    }
+
+    private static double convertToCelsius(double fahrenheitTemp) {
+        throw new RuntimeException("Cannot convert to Celsius!");
+    }
+
     public void setTemperatureFormat(temperatureFormat format) {
         throw new RuntimeException("Cannot set temperature format!");
     }
