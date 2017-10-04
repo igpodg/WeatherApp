@@ -34,7 +34,7 @@ public class WeatherRequestTest {
             assertNotNull(con);
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            assertEquals(con.getResponseCode(), HTTP_CODE_SUCCESS);
+            assertEquals(HTTP_CODE_SUCCESS, con.getResponseCode());
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -46,7 +46,7 @@ public class WeatherRequestTest {
             }
             in.close();
 
-            assertEquals(response.toString(), String.format("%.1f C", request.getCurrentTemperature()));
+            assertEquals(String.format("%.1f C", request.getCurrentTemperature()), response.toString());
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -61,7 +61,7 @@ public class WeatherRequestTest {
             assertNotNull(con);
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            assertEquals(con.getResponseCode(), HTTP_CODE_SUCCESS);
+            assertEquals(HTTP_CODE_SUCCESS, con.getResponseCode());
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -73,9 +73,9 @@ public class WeatherRequestTest {
             }
             in.close();
 
-            assertEquals(response.toString(),
-                    String.format("%.1f C",
-                            request.getHighestTemperature(WeatherRequest.dayOfWeek.TOMORROW)));
+            assertEquals(String.format("%.1f C",
+                    request.getHighestTemperature(WeatherRequest.dayOfWeek.TOMORROW)),
+                            response.toString());
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -102,9 +102,9 @@ public class WeatherRequestTest {
             }
             in.close();
 
-            assertEquals(response.toString(),
-                    String.format("%.1f C",
-                            request.getLowestTemperature(WeatherRequest.dayOfWeek.TOMORROW)));
+            assertEquals(String.format("%.1f C",
+                    request.getLowestTemperature(WeatherRequest.dayOfWeek.TOMORROW)),
+                            response.toString());
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -120,11 +120,11 @@ public class WeatherRequestTest {
     public void testCorrectFormatGeoCoordinates() {
         String coords = request.getGeoCoordinates();
         assertNotNull(coords);
-        assertEquals(coords.length(), "x.xxxx:y.yyyy".length());
+        assertEquals("x.xxxx:y.yyyy".length(), coords.length());
 
-        assertEquals(coords.charAt(1), '.');
-        assertEquals(coords.charAt(6), ':');
-        assertEquals(coords.charAt(8), '.');
+        assertEquals('.', coords.charAt(1));
+        assertEquals(':', coords.charAt(6));
+        assertEquals('.', coords.charAt(8));
 
         try {
             Double.parseDouble(coords.substring(0, 6));

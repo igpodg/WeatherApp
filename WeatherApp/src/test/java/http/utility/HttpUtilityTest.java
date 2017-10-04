@@ -39,7 +39,7 @@ public class HttpUtilityTest {
         try {
             String url = "https://www.example.com/";
             HttpURLConnection con = HttpUtility.makeUrlConnection(url);
-            assertEquals(con.getResponseCode(), HTTP_CODE_SUCCESS);
+            assertEquals(HTTP_CODE_SUCCESS, con.getResponseCode());
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -51,7 +51,7 @@ public class HttpUtilityTest {
         try {
             String url = "aaaaa://website.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/";
             HttpURLConnection con = HttpUtility.makeUrlConnection(url);
-            assertNotEquals(con.getResponseCode(), HTTP_CODE_SUCCESS);
+            assertNotEquals(HTTP_CODE_SUCCESS, con.getResponseCode());
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -77,12 +77,12 @@ public class HttpUtilityTest {
             HttpURLConnection con = HttpUtility.makeUrlConnection(url);
             HttpUtility.makeGetRequest(con);
             String result = HttpUtility.putDataToString(con);
-            assertEquals(result, "\nThis is an example of a simple ASCII text file stored on a Web server. " +
+            assertEquals("\nThis is an example of a simple ASCII text file stored on a Web server. " +
                     "Note that it has a file\nextension of \".txt\".\n\nAlthough such files may contains some basic " +
                     "layout formatting, such as paragraphs, there is no\nsupport for the text to have attributes, " +
                     "such as bolding.\n\nText files can contain Hypertext Mark-up codes but these will not be " +
                     "interpreted by the \nbrowser. For example, if the following characters <strong>hello</strong> " +
-                    "were typed into an\n\"html\" file then the word \"hello\" would be shown in bold.\n\n");
+                    "were typed into an\n\"html\" file then the word \"hello\" would be shown in bold.\n\n", result);
         } catch (Exception e) {
             e.printStackTrace();
             fail();

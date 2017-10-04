@@ -44,7 +44,7 @@ public class JsonObjectTest {
         try {
             String strJson = "{\"one\":\"1\",\"two\":\"2\"}";
             JsonObject objJson = JsonObject.getJsonObject(strJson);
-            assertEquals(objJson.getValueByKey("two"), "2");
+            assertEquals("2", objJson.getValueByKey("two"));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -56,7 +56,7 @@ public class JsonObjectTest {
         try {
             String strJson = "{\"one\":\"1\",\"two\":\"2\"}";
             JsonObject objJson = JsonObject.getJsonObject(strJson);
-            assertEquals(objJson.getValueByKeyInt("two"), 2);
+            assertEquals(2, objJson.getValueByKeyInt("two"));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -68,7 +68,7 @@ public class JsonObjectTest {
         try {
             String strJson = "{\"one\":\"1\",\"two\":\"2.1233444444444444444444\"}";
             JsonObject objJson = JsonObject.getJsonObject(strJson);
-            assertEquals(objJson.getValueByKeyDouble("two"), 2.1234, 0.0001);
+            assertEquals(2.1234, objJson.getValueByKeyDouble("two"), 0.0001);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
