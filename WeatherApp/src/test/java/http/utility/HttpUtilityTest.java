@@ -51,7 +51,7 @@ public class HttpUtilityTest {
         try {
             String url = "aaaaa://website.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/";
             HttpURLConnection con = HttpUtility.makeUrlConnection(url);
-            assertNotEquals(HTTP_CODE_SUCCESS, con.getResponseCode());
+            assertTrue(con == null || con.getResponseCode() != HTTP_CODE_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
             fail();

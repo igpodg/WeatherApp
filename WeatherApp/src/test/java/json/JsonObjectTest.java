@@ -22,9 +22,9 @@ public class JsonObjectTest {
         try {
             String strJson = "123hello";
             JsonObject objJson = JsonObject.getJsonObject(strJson);
+            fail();
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
         }
     }
 

@@ -25,7 +25,6 @@ public class CountryFormatterTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        fail();
     }
 
     @Test
