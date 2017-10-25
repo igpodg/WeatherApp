@@ -1,9 +1,12 @@
-package http.utility;
+package http;
 
 import java.net.*;
 import java.util.Scanner;
 
 public class HttpUtility {
+    public final static int HTTP_CODE_SUCCESS = 200;
+    public final static int HTTP_CODE_NOTFOUND = 404;
+
     public static HttpURLConnection makeUrlConnection(String url) {
         try {
             HttpURLConnection con = (HttpURLConnection) new URI(url).toURL().openConnection();
@@ -19,8 +22,14 @@ public class HttpUtility {
 
     public static void makeGetRequest(HttpURLConnection con) {
         try {
-            con.getResponseCode();
+            int currentResponse = con.getResponseCode();
+            if (currentResponse == HTTP_CODE_NOTFOUND) {
+                throw new RuntimeException("Page not found!");
+            } else if (currentResponse != HTTP_CODE_SUCCESS) {
+                throw new RuntimeException("GET request failed!");
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Cannot make GET request!");
         }
     }

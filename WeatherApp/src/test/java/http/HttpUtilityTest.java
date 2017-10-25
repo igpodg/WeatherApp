@@ -1,4 +1,4 @@
-package http.utility;
+package http;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -9,8 +9,6 @@ import java.net.HttpURLConnection;
 import static org.junit.Assert.*;
 
 public class HttpUtilityTest {
-    private final static int HTTP_CODE_SUCCESS = 200;
-
     @BeforeClass
     public static void setUpAllTests() {
         // before all tests
@@ -39,7 +37,7 @@ public class HttpUtilityTest {
         try {
             String url = "https://www.example.com/";
             HttpURLConnection con = HttpUtility.makeUrlConnection(url);
-            assertEquals(HTTP_CODE_SUCCESS, con.getResponseCode());
+            assertEquals(HttpUtility.HTTP_CODE_SUCCESS, con.getResponseCode());
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -51,7 +49,7 @@ public class HttpUtilityTest {
         try {
             String url = "aaaaa://website.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/";
             HttpURLConnection con = HttpUtility.makeUrlConnection(url);
-            assertTrue(con == null || con.getResponseCode() != HTTP_CODE_SUCCESS);
+            assertTrue(con == null || con.getResponseCode() != HttpUtility.HTTP_CODE_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
             fail();

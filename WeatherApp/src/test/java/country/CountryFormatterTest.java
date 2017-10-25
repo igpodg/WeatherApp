@@ -50,10 +50,24 @@ public class CountryFormatterTest {
     }
 
     @Test
-    public void testCorrectCountryCode() {
+    public void testCountryCodeExists() {
         try {
             CountryFormatter formatter = new CountryFormatter("countries.txt");
             assertTrue(formatter.getCountryNameByCode("US").isPresent());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testCountryCodeCorrectResult() {
+        try {
+            CountryFormatter formatter = new CountryFormatter("countries.txt");
+            if (!formatter.getCountryNameByCode("US").isPresent()) {
+                fail();
+            }
+            assertEquals("United States", formatter.getCountryNameByCode("US").get());
         } catch (Exception e) {
             e.printStackTrace();
             fail();
