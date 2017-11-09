@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static org.junit.Assert.*;
 
@@ -61,8 +62,8 @@ public class WeatherRequestTest {
             in.close();
 
             jsonObj = JsonObject.getJsonObject(response.toString());
-            assertEquals(request.getCurrentTemperature(),
-                    jsonObj.getValueByKeyDouble("main,temp") - 273.15, 0.001);
+            assertEquals(jsonObj.getValueByKeyDouble("main,temp") - 273.15,
+                    request.getCurrentTemperature(), 0.001);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -101,9 +102,9 @@ public class WeatherRequestTest {
             } while (!searchResult.contains(afterAfterTomorrow));
             jsonObj = JsonObject.getJsonObject(jsonObj.getValueByKey("list,main", iterator));
 
-            assertEquals(request.getHighestTemperature(WeatherRequest.dayOfWeek.TOMORROW),
-                    new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_max")) - 273.15)
-                            .setScale(10, RoundingMode.HALF_UP).doubleValue(), 0.001);
+            assertEquals(new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_max")) - 273.15)
+                            .setScale(10, RoundingMode.HALF_UP).doubleValue(),
+                    request.getHighestTemperature(WeatherRequest.dayOfWeek.TOMORROW), 0.001);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -142,9 +143,9 @@ public class WeatherRequestTest {
             } while (!searchResult.contains(afterAfterTomorrow));
             jsonObj = JsonObject.getJsonObject(jsonObj.getValueByKey("list,main", iterator));
 
-            assertEquals(request.getLowestTemperature(WeatherRequest.dayOfWeek.AFTER_AFTER_TOMORROW),
-                    new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_min")) - 273.15)
-                            .setScale(10, RoundingMode.HALF_UP).doubleValue(), 0.001);
+            assertEquals(new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_min")) - 273.15)
+                            .setScale(10, RoundingMode.HALF_UP).doubleValue(),
+                    request.getLowestTemperature(WeatherRequest.dayOfWeek.AFTER_AFTER_TOMORROW), 0.001);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -225,8 +226,8 @@ public class WeatherRequestTest {
             in.close();
 
             jsonObj = JsonObject.getJsonObject(response.toString());
-            assertEquals(request.getCurrentTemperature(),
-                    jsonObj.getValueByKeyDouble("main,temp") - 273.15, 0.001);
+            assertEquals(jsonObj.getValueByKeyDouble("main,temp") - 273.15,
+                    request.getCurrentTemperature(),0.001);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -263,7 +264,7 @@ public class WeatherRequestTest {
             double result = request.getLowestTemperature(WeatherRequest.dayOfWeek.AFTER_TOMORROW);
             String fileContents = new String(Files.readAllBytes(Paths.get("./output.txt")))
                     .replace("\r", "");
-            assertEquals(String.format("%.3f\n", result), fileContents);
+            assertEquals(String.format(Locale.ROOT, "%.3f\n", result), fileContents);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
