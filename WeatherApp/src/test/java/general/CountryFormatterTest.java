@@ -1,5 +1,6 @@
-package country;
+package general;
 
+import general.CountryFormatter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -1,6 +1,7 @@
 package weather;
 
 import general.FileManager;
+import general.UnitConverter;
 import http.HttpUtility;
 import json.JsonObject;
 
@@ -22,19 +23,8 @@ public class WeatherRequest {
     private final static String OUTPUT_FILENAME = "output.txt";
 
     private String apiKey;
-    private temperatureFormat format;
+    private WeatherConstants.TemperatureFormat format;
     private String currentCity;
-
-    public enum dayOfWeek {
-        TOMORROW,
-        AFTER_TOMORROW,
-        AFTER_AFTER_TOMORROW
-    }
-
-    public enum temperatureFormat {
-        CELSIUS,
-        FAHRENHEIT
-    }
 
     private static String loadFromFileOrCreateNew(String fileName) {
         try {
@@ -57,7 +47,7 @@ public class WeatherRequest {
         }
     }
 
-    public WeatherRequest(String apiKey, temperatureFormat defaultFormat) {
+    public WeatherRequest(String apiKey, WeatherConstants.TemperatureFormat defaultFormat) {
         this.apiKey = apiKey;
         this.format = defaultFormat;
         this.currentCity = loadFromFileOrCreateNew(INPUT_FILENAME);
@@ -74,23 +64,7 @@ public class WeatherRequest {
         return this.currentCity;
     }
 
-    private static double convertToFahrenheit(double kelvinTemp) {
-        try {
-            return ((kelvinTemp - 273.15) * 9 / 5) + 32;
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot convert to Fahrenheit!");
-        }
-    }
-
-    private static double convertToCelsius(double kelvinTemp) {
-        try {
-            return kelvinTemp - 273.15;
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot convert to Celsius!");
-        }
-    }
-
-    public void setTemperatureFormat(temperatureFormat format) {
+    public void setTemperatureFormat(WeatherConstants.TemperatureFormat format) {
         try {
             this.format = format;
         } catch (Exception e) {
@@ -112,7 +86,7 @@ public class WeatherRequest {
         }
     }
 
-    private double getDoubleFromAPI(String weatherString, String key) {
+    private double getDoubleFromAPI(String weatherString, String key, boolean useDate, String dateToSearch) {
         try {
             ensureCityIsPresent();
         } catch (Exception e) {
@@ -128,46 +102,32 @@ public class WeatherRequest {
         HttpUtility.closeUrlConnection(connection);
         //System.out.println("jsonString: " + jsonString);
         JsonObject jsonObject = JsonObject.getJsonObject(jsonString);
-        return jsonObject.getValueByKeyDouble(key);
-    }
-
-    private double getDoubleFromAPIDate(String dateToSearch, String key) {
-        try {
-            ensureCityIsPresent();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Double.NaN;
+        if (useDate) {
+            int iterator = 0;
+            String searchResult = null;
+            do {
+                searchResult = jsonObject.getValueByKey("list,dt_txt", iterator);
+                iterator++;
+            } while (!searchResult.contains(dateToSearch));
+            jsonObject = JsonObject.getJsonObject(jsonObject.getValueByKey("list,main", iterator));
         }
-
-        HttpURLConnection connection = HttpUtility.makeUrlConnection(
-                String.format(BASE_URL_FORMAT, FORECAST_WEATHER, this.currentCity, this.apiKey));
-        HttpUtility.makeGetRequest(connection);
-
-        String jsonString = HttpUtility.putDataToString(connection);
-        //System.out.println("jsonString: " + jsonString);
-        JsonObject jsonObject = JsonObject.getJsonObject(jsonString);
-        int iterator = 0;
-        String searchResult = null;
-        do {
-            searchResult = jsonObject.getValueByKey("list,dt_txt", iterator);
-            iterator++;
-        } while (!searchResult.contains(dateToSearch));
-        jsonObject = JsonObject.getJsonObject(jsonObject.getValueByKey("list,main", iterator));
         return jsonObject.getValueByKeyDouble(key);
     }
 
     private double getTemperatureInCurrentFormat(double kelvinTemp) {
-        if (this.format == temperatureFormat.CELSIUS) {
-            return new BigDecimal(convertToCelsius(kelvinTemp)).setScale(10, RoundingMode.HALF_UP).doubleValue();
-        } else if (this.format == temperatureFormat.FAHRENHEIT) {
-            return new BigDecimal(convertToFahrenheit(kelvinTemp)).setScale(10, RoundingMode.HALF_UP).doubleValue();
+        if (this.format == WeatherConstants.TemperatureFormat.CELSIUS) {
+            return new BigDecimal(UnitConverter.convertTempToCelsius(kelvinTemp))
+                    .setScale(10, RoundingMode.HALF_UP).doubleValue();
+        } else if (this.format == WeatherConstants.TemperatureFormat.FAHRENHEIT) {
+            return new BigDecimal(UnitConverter.convertTempToFahrenheit(kelvinTemp))
+                    .setScale(10, RoundingMode.HALF_UP).doubleValue();
         } else {
             throw new RuntimeException("Unknown temperature format set!");
         }
     }
 
     public double getCurrentTemperature() {
-        double kelvinTemp = getDoubleFromAPI(CURRENT_WEATHER, "main,temp");
+        double kelvinTemp = getDoubleFromAPI(CURRENT_WEATHER, "main,temp", false, null);
         if (Double.isNaN(kelvinTemp)) {
             throw new RuntimeException("Cannot get current temperature!");
         }
@@ -176,7 +136,7 @@ public class WeatherRequest {
         return currentTemp;
     }
 
-    private double getLeveledTemperature(dayOfWeek day, String levelString) {
+    private double getLeveledTemperature(WeatherConstants.DayOfWeek day, String levelString) {
         LocalDateTime currentDate = LocalDateTime.now();
         switch (day) {
             case TOMORROW:
@@ -190,7 +150,7 @@ public class WeatherRequest {
                 break;
         }
         String dateToSearch = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        double answer = getDoubleFromAPIDate(dateToSearch, levelString);
+        double answer = getDoubleFromAPI(FORECAST_WEATHER, levelString, true, dateToSearch);
         if (Double.isNaN(answer)) {
             throw new RuntimeException("Cannot get leveled temperature");
         }
@@ -198,7 +158,7 @@ public class WeatherRequest {
         return getTemperatureInCurrentFormat(answer);
     }
 
-    public double getHighestTemperature(dayOfWeek day) {
+    public double getHighestTemperature(WeatherConstants.DayOfWeek day) {
         try {
             double maxTemp = getLeveledTemperature(day, "temp_max");
             writeToFile(OUTPUT_FILENAME, String.valueOf(maxTemp));
@@ -209,7 +169,7 @@ public class WeatherRequest {
         }
     }
 
-    public double getLowestTemperature(dayOfWeek day) {
+    public double getLowestTemperature(WeatherConstants.DayOfWeek day) {
         try {
             double minTemp = getLeveledTemperature(day, "temp_min");
             writeToFile(OUTPUT_FILENAME, String.valueOf(minTemp));
@@ -223,8 +183,10 @@ public class WeatherRequest {
     public String getGeoCoordinates() {
         // xx.xxxx:yyy.yyyy
         try {
-            double latitude = getDoubleFromAPI(FORECAST_WEATHER, "city,coord,lat");
-            double longitude = getDoubleFromAPI(FORECAST_WEATHER, "city,coord,lon");
+            double latitude = getDoubleFromAPI(
+                    FORECAST_WEATHER, "city,coord,lat", false, null);
+            double longitude = getDoubleFromAPI(
+                    FORECAST_WEATHER, "city,coord,lon", false, null);
             String outputString = String.format(Locale.ROOT, "%07.4f:%08.4f", latitude, longitude);
             writeToFile(OUTPUT_FILENAME, outputString);
             return outputString;

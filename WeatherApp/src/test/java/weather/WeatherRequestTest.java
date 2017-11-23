@@ -38,7 +38,7 @@ public class WeatherRequestTest {
         apiUrl = "http://api.openweathermap.org/data/2.5/weather?q=Tallinn,EE" +
                 "&appid=" + apiKey;
         request = new WeatherRequest(apiKey,
-                WeatherRequest.temperatureFormat.CELSIUS);
+                WeatherConstants.TemperatureFormat.CELSIUS);
         request.setCity("Tallinn");
     }
 
@@ -104,7 +104,7 @@ public class WeatherRequestTest {
 
             assertEquals(new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_max")) - 273.15)
                             .setScale(10, RoundingMode.HALF_UP).doubleValue(),
-                    request.getHighestTemperature(WeatherRequest.dayOfWeek.TOMORROW), 0.001);
+                    request.getHighestTemperature(WeatherConstants.DayOfWeek.TOMORROW), 0.001);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -145,7 +145,7 @@ public class WeatherRequestTest {
 
             assertEquals(new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_min")) - 273.15)
                             .setScale(10, RoundingMode.HALF_UP).doubleValue(),
-                    request.getLowestTemperature(WeatherRequest.dayOfWeek.AFTER_AFTER_TOMORROW), 0.001);
+                    request.getLowestTemperature(WeatherConstants.DayOfWeek.AFTER_AFTER_TOMORROW), 0.001);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -179,10 +179,10 @@ public class WeatherRequestTest {
     @Test
     public void testSetFormat() {
         try {
-            WeatherRequest request = new WeatherRequest("", WeatherRequest.temperatureFormat.CELSIUS);
-            request.setTemperatureFormat(WeatherRequest.temperatureFormat.FAHRENHEIT);
-            request.setTemperatureFormat(WeatherRequest.temperatureFormat.CELSIUS);
-            request.setTemperatureFormat(WeatherRequest.temperatureFormat.FAHRENHEIT);
+            WeatherRequest request = new WeatherRequest("", WeatherConstants.TemperatureFormat.CELSIUS);
+            request.setTemperatureFormat(WeatherConstants.TemperatureFormat.FAHRENHEIT);
+            request.setTemperatureFormat(WeatherConstants.TemperatureFormat.CELSIUS);
+            request.setTemperatureFormat(WeatherConstants.TemperatureFormat.FAHRENHEIT);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -261,7 +261,7 @@ public class WeatherRequestTest {
     public void testCorrectOutput() {
         try {
             FileManager.writeContents("output.txt", "", false, false);
-            double result = request.getLowestTemperature(WeatherRequest.dayOfWeek.AFTER_TOMORROW);
+            double result = request.getLowestTemperature(WeatherConstants.DayOfWeek.AFTER_TOMORROW);
             String fileContents = new String(Files.readAllBytes(Paths.get("./output.txt")))
                     .replace("\r", "");
             assertEquals(String.format(Locale.ROOT, "%.3f\n", result), fileContents);

@@ -1,4 +1,4 @@
-package country;
+package general;
 
 import general.FileManager;
 
