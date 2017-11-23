@@ -26,7 +26,7 @@ public class WeatherRequest {
     private WeatherConstants.TemperatureFormat format;
     private String currentCity;
 
-    private static String loadFromFileOrCreateNew(String fileName) {
+    private static String loadStringFromFileOrCreateNew(String fileName) {
         try {
             File file = FileManager.getFileByName(fileName);
             return new Scanner(file).useDelimiter("\\Z").next();
@@ -39,7 +39,7 @@ public class WeatherRequest {
 
     private static void writeToFile(String fileName, String stringToWrite) {
         //Thread.dumpStack();
-        loadFromFileOrCreateNew(fileName);
+        loadStringFromFileOrCreateNew(fileName);
         if (fileName.equals(INPUT_FILENAME)) {
             FileManager.writeContents(fileName, stringToWrite, false, false);
         } else {
@@ -68,8 +68,8 @@ public class WeatherRequest {
     public WeatherRequest(String apiKey, WeatherConstants.TemperatureFormat defaultFormat) {
         this.apiKey = apiKey;
         this.format = defaultFormat;
-        this.currentCity = loadFromFileOrCreateNew(INPUT_FILENAME);
-        loadFromFileOrCreateNew(OUTPUT_FILENAME);
+        this.currentCity = loadStringFromFileOrCreateNew(INPUT_FILENAME);
+        loadStringFromFileOrCreateNew(OUTPUT_FILENAME);
         ensureCityIsDefined();
     }
 

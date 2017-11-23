@@ -30,7 +30,7 @@ public class TempConverter {
             return new BigDecimal(convertToFahrenheit(kelvinTemp))
                     .setScale(10, RoundingMode.HALF_UP).doubleValue();
         } else {
-            throw new RuntimeException("Unknown temperature format set!");
+            throw new RuntimeException("Unknown temperature format!");
         }
     }
 }
