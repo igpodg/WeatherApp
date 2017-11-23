@@ -11,4 +11,9 @@ public class WeatherConstants {
         CELSIUS,
         FAHRENHEIT
     }
+
+    public enum TemperatureLevel {
+        LOWEST,
+        HIGHEST
+    }
 }

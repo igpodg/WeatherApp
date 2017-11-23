@@ -1,17 +1,14 @@
 package weather;
 
 import general.FileManager;
-import general.UnitConverter;
+import general.TempConverter;
 import http.HttpUtility;
 import json.JsonObject;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class WeatherRequest {
@@ -21,6 +18,9 @@ public class WeatherRequest {
 
     private final static String INPUT_FILENAME = "input.txt";
     private final static String OUTPUT_FILENAME = "output.txt";
+
+    private final static String API_LOWEST_TEMP = "temp_min";
+    private final static String API_HIGHEST_TEMP = "temp_max";
 
     private String apiKey;
     private WeatherConstants.TemperatureFormat format;
@@ -44,6 +44,24 @@ public class WeatherRequest {
             FileManager.writeContents(fileName, stringToWrite, false, false);
         } else {
             FileManager.writeContents(fileName, stringToWrite, true, true);
+        }
+    }
+
+    private boolean isCityDefined() {
+        return !(this.currentCity == null || this.currentCity.isEmpty());
+    }
+
+    private void ensureCityIsDefined() {
+        if (!isCityDefined()) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("City not defined, do you want to type its name from console? (y/n): ");
+            if (Character.toLowerCase(scanner.next().charAt(0)) == 'y') {
+                scanner = new Scanner(System.in);
+                System.out.print("Please enter city: ");
+                setCity(scanner.nextLine());
+            } else {
+                throw new RuntimeException("City not defined!");
+            }
         }
     }
 
@@ -72,25 +90,8 @@ public class WeatherRequest {
         }
     }
 
-    private void ensureCityIsPresent() {
-        if (this.currentCity == null || this.currentCity.isEmpty()) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("City not defined, do you want to type its name from console? (y/n): ");
-            if (Character.toLowerCase(scanner.next().charAt(0)) == 'y') {
-                scanner = new Scanner(System.in);
-                System.out.print("Please enter city: ");
-                setCity(scanner.nextLine());
-            } else {
-                throw new RuntimeException("City not defined!");
-            }
-        }
-    }
-
     private double getDoubleFromAPI(String weatherString, String key, boolean useDate, String dateToSearch) {
-        try {
-            ensureCityIsPresent();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!isCityDefined()) {
             return Double.NaN;
         }
 
@@ -115,15 +116,7 @@ public class WeatherRequest {
     }
 
     private double getTemperatureInCurrentFormat(double kelvinTemp) {
-        if (this.format == WeatherConstants.TemperatureFormat.CELSIUS) {
-            return new BigDecimal(UnitConverter.convertTempToCelsius(kelvinTemp))
-                    .setScale(10, RoundingMode.HALF_UP).doubleValue();
-        } else if (this.format == WeatherConstants.TemperatureFormat.FAHRENHEIT) {
-            return new BigDecimal(UnitConverter.convertTempToFahrenheit(kelvinTemp))
-                    .setScale(10, RoundingMode.HALF_UP).doubleValue();
-        } else {
-            throw new RuntimeException("Unknown temperature format set!");
-        }
+        return TempConverter.getTemperatureInFormat(this.format, kelvinTemp);
     }
 
     public double getCurrentTemperature() {
@@ -136,7 +129,7 @@ public class WeatherRequest {
         return currentTemp;
     }
 
-    private double getLeveledTemperature(WeatherConstants.DayOfWeek day, String levelString) {
+    public double getLeveledTemperature(WeatherConstants.DayOfWeek day, WeatherConstants.TemperatureLevel level) {
         LocalDateTime currentDate = LocalDateTime.now();
         switch (day) {
             case TOMORROW:
@@ -150,7 +143,9 @@ public class WeatherRequest {
                 break;
         }
         String dateToSearch = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        double answer = getDoubleFromAPI(FORECAST_WEATHER, levelString, true, dateToSearch);
+        double answer = getDoubleFromAPI(FORECAST_WEATHER,
+                (level == WeatherConstants.TemperatureLevel.LOWEST) ? API_LOWEST_TEMP : API_HIGHEST_TEMP,
+                true, dateToSearch);
         if (Double.isNaN(answer)) {
             throw new RuntimeException("Cannot get leveled temperature");
         }
@@ -160,7 +155,7 @@ public class WeatherRequest {
 
     public double getHighestTemperature(WeatherConstants.DayOfWeek day) {
         try {
-            double maxTemp = getLeveledTemperature(day, "temp_max");
+            double maxTemp = getLeveledTemperature(day, WeatherConstants.TemperatureLevel.HIGHEST);
             writeToFile(OUTPUT_FILENAME, String.valueOf(maxTemp));
             return maxTemp;
         } catch (Exception e) {
@@ -171,7 +166,7 @@ public class WeatherRequest {
 
     public double getLowestTemperature(WeatherConstants.DayOfWeek day) {
         try {
-            double minTemp = getLeveledTemperature(day, "temp_min");
+            double minTemp = getLeveledTemperature(day, WeatherConstants.TemperatureLevel.LOWEST);
             writeToFile(OUTPUT_FILENAME, String.valueOf(minTemp));
             return minTemp;
         } catch (Exception e) {
@@ -181,13 +176,12 @@ public class WeatherRequest {
     }
 
     public String getGeoCoordinates() {
-        // xx.xxxx:yyy.yyyy
         try {
             double latitude = getDoubleFromAPI(
                     FORECAST_WEATHER, "city,coord,lat", false, null);
             double longitude = getDoubleFromAPI(
                     FORECAST_WEATHER, "city,coord,lon", false, null);
-            String outputString = String.format(Locale.ROOT, "%07.4f:%08.4f", latitude, longitude);
+            String outputString = new GeoCoordinates(latitude, longitude).toString();
             writeToFile(OUTPUT_FILENAME, outputString);
             return outputString;
         } catch (Exception e) {
