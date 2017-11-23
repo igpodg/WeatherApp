@@ -70,6 +70,7 @@ public class WeatherRequest {
         this.format = defaultFormat;
         this.currentCity = loadFromFileOrCreateNew(INPUT_FILENAME);
         loadFromFileOrCreateNew(OUTPUT_FILENAME);
+        ensureCityIsDefined();
     }
 
     public void setCity(String city) {
@@ -105,7 +106,7 @@ public class WeatherRequest {
         JsonObject jsonObject = JsonObject.getJsonObject(jsonString);
         if (useDate) {
             int iterator = 0;
-            String searchResult = null;
+            String searchResult;
             do {
                 searchResult = jsonObject.getValueByKey("list,dt_txt", iterator);
                 iterator++;
