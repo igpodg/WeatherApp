@@ -2,6 +2,7 @@ package general;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class FileManager {
     private static File getFileObject(String name) {
@@ -36,6 +37,14 @@ public class FileManager {
             writer.close();
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Cannot find file!");
+        }
+    }
+
+    public static String loadContents(File file) {
+        try {
+            return new Scanner(file).useDelimiter("\\Z").next();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot load file contents!");
         }
     }
 }

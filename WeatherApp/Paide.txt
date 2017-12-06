@@ -1,0 +1,12 @@
+Ilma raport -- 6 Dec 2017 23:28:57:
+	- Linn: Paide
+	- Linna koordinaadid: lat 58.8856 lon 25.5572
+	- Maksimaalne temperatuur:
+		- Homme: -6.99 °C
+		- Ülehomme: 2.19 °C
+		- Üleülehomme: 0.85 °C
+	- Minimaalne temperatuur:
+		- Homme: -7.00 °C
+		- Ülehomme: 2.19 °C
+		- Üleülehomme: 0.85 °C
+	- Praegune temperatuur: -9.75 °C

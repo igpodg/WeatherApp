@@ -16,9 +16,6 @@ public class WeatherRequest {
     private final static String CURRENT_WEATHER = "weather";
     private final static String FORECAST_WEATHER = "forecast";
 
-    private final static String INPUT_FILENAME = "input.txt";
-    private final static String OUTPUT_FILENAME = "output.txt";
-
     private final static String API_LOWEST_TEMP = "temp_min";
     private final static String API_HIGHEST_TEMP = "temp_max";
 
@@ -26,60 +23,28 @@ public class WeatherRequest {
     private WeatherConstants.TemperatureFormat format;
     private String currentCity;
 
-    private static String loadStringFromFileOrCreateNew(String fileName) {
-        try {
-            File file = FileManager.getFileByName(fileName);
-            return new Scanner(file).useDelimiter("\\Z").next();
-        } catch (Exception e) {
-            FileManager.createNewFile(fileName);
-        }
-
-        return "";
-    }
-
-    private static void writeToFile(String fileName, String stringToWrite) {
-        //Thread.dumpStack();
-        loadStringFromFileOrCreateNew(fileName);
-        if (fileName.equals(INPUT_FILENAME)) {
-            FileManager.writeContents(fileName, stringToWrite, false, false);
-        } else {
-            FileManager.writeContents(fileName, stringToWrite, true, true);
-        }
-    }
-
     private boolean isCityDefined() {
         return !(this.currentCity == null || this.currentCity.isEmpty());
     }
 
     private void ensureCityIsDefined() {
         if (!isCityDefined()) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("City not defined, do you want to type its name from console? (y/n): ");
-            if (Character.toLowerCase(scanner.next().charAt(0)) == 'y') {
-                scanner = new Scanner(System.in);
-                System.out.print("Please enter city: ");
-                setCity(scanner.nextLine());
-            } else {
-                throw new RuntimeException("City not defined!");
-            }
+            throw new RuntimeException("City not defined!");
         }
     }
 
     public WeatherRequest(String apiKey, WeatherConstants.TemperatureFormat defaultFormat) {
         this.apiKey = apiKey;
         this.format = defaultFormat;
-        this.currentCity = loadStringFromFileOrCreateNew(INPUT_FILENAME);
-        loadStringFromFileOrCreateNew(OUTPUT_FILENAME);
-        ensureCityIsDefined();
+        this.currentCity = null;
     }
 
     public void setCity(String city) {
         this.currentCity = city;
-        writeToFile(INPUT_FILENAME, city);
     }
 
     public String getCity() {
-        writeToFile(OUTPUT_FILENAME, this.currentCity);
+        ensureCityIsDefined();
         return this.currentCity;
     }
 
@@ -121,16 +86,16 @@ public class WeatherRequest {
     }
 
     public double getCurrentTemperature() {
+        ensureCityIsDefined();
         double kelvinTemp = getDoubleFromAPI(CURRENT_WEATHER, "main,temp", false, null);
         if (Double.isNaN(kelvinTemp)) {
             throw new RuntimeException("Cannot get current temperature!");
         }
-        double currentTemp = getTemperatureInCurrentFormat(kelvinTemp);
-        writeToFile(OUTPUT_FILENAME, String.valueOf(currentTemp));
-        return currentTemp;
+        return getTemperatureInCurrentFormat(kelvinTemp);
     }
 
-    public double getLeveledTemperature(WeatherConstants.DayOfWeek day, WeatherConstants.TemperatureLevel level) {
+    private double getLeveledTemperature(WeatherConstants.DayOfWeek day, WeatherConstants.TemperatureLevel level) {
+        ensureCityIsDefined();
         LocalDateTime currentDate = LocalDateTime.now();
         switch (day) {
             case TOMORROW:
@@ -156,9 +121,7 @@ public class WeatherRequest {
 
     public double getHighestTemperature(WeatherConstants.DayOfWeek day) {
         try {
-            double maxTemp = getLeveledTemperature(day, WeatherConstants.TemperatureLevel.HIGHEST);
-            writeToFile(OUTPUT_FILENAME, String.valueOf(maxTemp));
-            return maxTemp;
+            return getLeveledTemperature(day, WeatherConstants.TemperatureLevel.HIGHEST);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Cannot get highest temperature!");
@@ -167,9 +130,7 @@ public class WeatherRequest {
 
     public double getLowestTemperature(WeatherConstants.DayOfWeek day) {
         try {
-            double minTemp = getLeveledTemperature(day, WeatherConstants.TemperatureLevel.LOWEST);
-            writeToFile(OUTPUT_FILENAME, String.valueOf(minTemp));
-            return minTemp;
+            return getLeveledTemperature(day, WeatherConstants.TemperatureLevel.LOWEST);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Cannot get lowest temperature!");
@@ -177,14 +138,13 @@ public class WeatherRequest {
     }
 
     public String getGeoCoordinates() {
+        ensureCityIsDefined();
         try {
             double latitude = getDoubleFromAPI(
                     FORECAST_WEATHER, "city,coord,lat", false, null);
             double longitude = getDoubleFromAPI(
                     FORECAST_WEATHER, "city,coord,lon", false, null);
-            String outputString = new GeoCoordinates(latitude, longitude).toString();
-            writeToFile(OUTPUT_FILENAME, outputString);
-            return outputString;
+            return new GeoCoordinates(latitude, longitude).toString();
         } catch (Exception e) {
             throw new RuntimeException("Cannot get geographical coordinates!");
         }
