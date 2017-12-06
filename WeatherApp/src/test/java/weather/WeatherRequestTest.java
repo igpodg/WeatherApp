@@ -189,10 +189,10 @@ public class WeatherRequestTest {
         }
     }
 
-    @Test
+    @Test (expected = RuntimeException.class)
     public void testSetGetCityNull() {
         request.setCity(null);
-        assertEquals(null, request.getCity());
+        request.getCity();
     }
 
     @Test
@@ -243,7 +243,7 @@ public class WeatherRequestTest {
         System.out.println(request.getCurrentTemperature());
         System.setIn(System.in);
         assertEquals("Narva", request.getCity());
-    }*/
+    }
 
     @Test
     public void testCorrectInput() {
@@ -269,5 +269,5 @@ public class WeatherRequestTest {
             e.printStackTrace();
             fail();
         }
-    }
+    }*/
 }

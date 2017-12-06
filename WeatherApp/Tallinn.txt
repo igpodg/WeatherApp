@@ -1,12 +1,12 @@
-Ilma raport -- 6 Dec 2017 23:28:59:
+Ilma raport -- 7 Dec 2017 01:03:44:
 	- Linn: Tallinn
-	- Linna koordinaadid: lat 59.4372 lon 24.7454
+	- Linna koordinaadid: lat 59.4370 lon 24.7535
 	- Maksimaalne temperatuur:
-		- Homme: 0.48 °C
-		- Ülehomme: 4.39 °C
-		- Üleülehomme: 3.57 °C
+		- Homme: 39.89 °F
+		- Ülehomme: 38.43 °F
+		- Üleülehomme: 33.50 °F
 	- Minimaalne temperatuur:
-		- Homme: 0.06 °C
-		- Ülehomme: 4.39 °C
-		- Üleülehomme: 3.57 °C
-	- Praegune temperatuur: 1.00 °C
+		- Homme: 39.89 °F
+		- Ülehomme: 38.43 °F
+		- Üleülehomme: 33.50 °F
+	- Praegune temperatuur: 30.20 °F

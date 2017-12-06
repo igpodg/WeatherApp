@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 
@@ -99,5 +100,27 @@ public class FileManagerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testLoadContentsCorrect() {
+        try {
+            PrintWriter out = new PrintWriter("randomfile.txt");
+            out.println("random string!!!");
+            out.close();
+
+            File file = FileManager.getFileByName("randomfile.txt");
+            String loadedContents = FileManager.loadContents(file);
+            assertEquals("random string!!!", loadedContents);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test (expected = RuntimeException.class)
+    public void testLoadContentsNoFile() {
+        File file = FileManager.getFileByName("nofile.txt");
+        FileManager.loadContents(file);
     }
 }
