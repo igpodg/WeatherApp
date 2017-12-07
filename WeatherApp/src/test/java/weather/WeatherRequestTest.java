@@ -42,8 +42,59 @@ public class WeatherRequestTest {
         request.setCity("Tallinn");
     }
 
-    @Test
-    public void testIsCorrectCurrentTemp() {
+    private void tryLeveledTemp(String levelString, WeatherConstants.DayOfWeek day) {
+        int dayOfWeekCode = 0;
+        switch (day) {
+            case TOMORROW:
+                dayOfWeekCode = 1;
+                break;
+            case AFTER_TOMORROW:
+                dayOfWeekCode = 2;
+                break;
+            case AFTER_AFTER_TOMORROW:
+                dayOfWeekCode = 3;
+                break;
+        }
+        apiUrl = "http://api.openweathermap.org/data/2.5/forecast?q=Tallinn,EE" +
+                "&appid=" + apiKey;
+        try {
+            HttpURLConnection con = HttpUtility.makeUrlConnection(apiUrl);
+            assertNotNull(con);
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            assertEquals(HttpUtility.HTTP_CODE_SUCCESS, con.getResponseCode());
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            jsonObj = JsonObject.getJsonObject(response.toString());
+            String afterAfterTomorrow = LocalDateTime.now().plusDays(dayOfWeekCode)
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            int iterator = 0;
+            String searchResult = null;
+            do {
+                searchResult = jsonObj.getValueByKey("list,dt_txt", iterator);
+                iterator++;
+            } while (!searchResult.contains(afterAfterTomorrow));
+            jsonObj = JsonObject.getJsonObject(jsonObj.getValueByKey("list,main", iterator));
+
+            assertEquals(new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_" + levelString)) - 273.15)
+                            .setScale(10, RoundingMode.HALF_UP).doubleValue(),
+                    request.getLowestTemperature(day), 0.001);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    private void tryCurrentTemp() {
         try {
             HttpURLConnection con = HttpUtility.makeUrlConnection(apiUrl);
             assertNotNull(con);
@@ -71,85 +122,22 @@ public class WeatherRequestTest {
     }
 
     @Test
+    public void testIsCorrectCurrentTemp() {
+        tryCurrentTemp();
+    }
+
+    @Test
     public void testCorrectHighestTemp() {
-        apiUrl = "http://api.openweathermap.org/data/2.5/forecast?q=Tallinn,EE" +
-                "&appid=" + apiKey;
-        try {
-            HttpURLConnection con = HttpUtility.makeUrlConnection(apiUrl);
-            assertNotNull(con);
-            con.setRequestMethod("GET");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            assertEquals(HttpUtility.HTTP_CODE_SUCCESS, con.getResponseCode());
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            jsonObj = JsonObject.getJsonObject(response.toString());
-            String afterAfterTomorrow = LocalDateTime.now().plusDays(1)
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            int iterator = 0;
-            String searchResult = null;
-            do {
-                searchResult = jsonObj.getValueByKey("list,dt_txt", iterator);
-                iterator++;
-            } while (!searchResult.contains(afterAfterTomorrow));
-            jsonObj = JsonObject.getJsonObject(jsonObj.getValueByKey("list,main", iterator));
-
-            assertEquals(new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_max")) - 273.15)
-                            .setScale(10, RoundingMode.HALF_UP).doubleValue(),
-                    request.getHighestTemperature(WeatherConstants.DayOfWeek.TOMORROW), 0.001);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        tryLeveledTemp("max", WeatherConstants.DayOfWeek.TOMORROW);
+        tryLeveledTemp("max", WeatherConstants.DayOfWeek.AFTER_TOMORROW);
+        tryLeveledTemp("max", WeatherConstants.DayOfWeek.AFTER_AFTER_TOMORROW);
     }
 
     @Test
     public void testCorrectLowestTemp() {
-        apiUrl = "http://api.openweathermap.org/data/2.5/forecast?q=Tallinn,EE" +
-                "&appid=" + apiKey;
-        try {
-            HttpURLConnection con = HttpUtility.makeUrlConnection(apiUrl);
-            assertNotNull(con);
-            con.setRequestMethod("GET");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            assertEquals(con.getResponseCode(), HttpUtility.HTTP_CODE_SUCCESS);
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            jsonObj = JsonObject.getJsonObject(response.toString());
-            String afterAfterTomorrow = LocalDateTime.now().plusDays(3)
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            int iterator = 0;
-            String searchResult = null;
-            do {
-                searchResult = jsonObj.getValueByKey("list,dt_txt", iterator);
-                iterator++;
-            } while (!searchResult.contains(afterAfterTomorrow));
-            jsonObj = JsonObject.getJsonObject(jsonObj.getValueByKey("list,main", iterator));
-
-            assertEquals(new BigDecimal(Double.parseDouble(jsonObj.getValueByKey("temp_min")) - 273.15)
-                            .setScale(10, RoundingMode.HALF_UP).doubleValue(),
-                    request.getLowestTemperature(WeatherConstants.DayOfWeek.AFTER_AFTER_TOMORROW), 0.001);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        tryLeveledTemp("min", WeatherConstants.DayOfWeek.TOMORROW);
+        tryLeveledTemp("min", WeatherConstants.DayOfWeek.AFTER_TOMORROW);
+        tryLeveledTemp("min", WeatherConstants.DayOfWeek.AFTER_AFTER_TOMORROW);
     }
 
     @Test
@@ -208,30 +196,7 @@ public class WeatherRequestTest {
         apiUrl = "http://api.openweathermap.org/data/2.5/weather?q=Tartu,EE" +
                 "&appid=" + apiKey;
         request.setCity("Tartu");
-        try {
-            HttpURLConnection con = HttpUtility.makeUrlConnection(apiUrl);
-            assertNotNull(con);
-            con.setRequestMethod("GET");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            assertEquals(HttpUtility.HTTP_CODE_SUCCESS, con.getResponseCode());
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            jsonObj = JsonObject.getJsonObject(response.toString());
-            assertEquals(jsonObj.getValueByKeyDouble("main,temp") - 273.15,
-                    request.getCurrentTemperature(),0.001);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        tryCurrentTemp();
     }
 
     /*@Test

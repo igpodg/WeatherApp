@@ -1,4 +1,4 @@
-Ilma raport -- 7 dets 2017 08:32:05:
+Ilma raport -- 7 dets 2017 08:40:58:
 	- Linn: Tallinn
 	- Linna koordinaadid: lat 59.4372 lon 24.7454
 	- Maksimaalne temperatuur:
