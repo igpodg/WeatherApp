@@ -46,45 +46,60 @@ public class WeatherReport {
         request.setTemperatureFormat(currentFormat);
     }
 
-    public void printAndSaveReport() throws RuntimeException {
+    private String formatReport(String cityName, String temperatureIndicator) throws RuntimeException {
+        LocalDateTime currentDate = LocalDateTime.now();
+        request.setCity(cityName);
+        try {
+            String[] coordinates = request.getGeoCoordinates().split(":");
+            coordinates[1] = (coordinates[1].charAt(0) == '0') ? coordinates[1].substring(1) : coordinates[1];
+            return String.format("Ilma raport -- %s:\n\t- Linn: %s\n" +
+                            "\t- Linna koordinaadid: lat %s lon %s\n" +
+                            "\t- Maksimaalne temperatuur:\n\t\t- Homme: %.2f%s\n\t\t- Ülehomme: %.2f%s\n" +
+                            "\t\t- Üleülehomme: %.2f%s\n\t- Minimaalne temperatuur:\n\t\t- Homme: %.2f%s\n" +
+                            "\t\t- Ülehomme: %.2f%s\n\t\t- Üleülehomme: %.2f%s\n\t- Praegune temperatuur: %.2f%s\n",
+                    currentDate.format(DateTimeFormatter.ofPattern("d MMM YYYY HH:mm:ss")),
+                    cityName, coordinates[0], coordinates[1],
+                    request.getHighestTemperature(WeatherConstants.DayOfWeek.TOMORROW),
+                    temperatureIndicator,
+                    request.getHighestTemperature(WeatherConstants.DayOfWeek.AFTER_TOMORROW),
+                    temperatureIndicator,
+                    request.getHighestTemperature(WeatherConstants.DayOfWeek.AFTER_AFTER_TOMORROW),
+                    temperatureIndicator,
+                    request.getLowestTemperature(WeatherConstants.DayOfWeek.TOMORROW),
+                    temperatureIndicator,
+                    request.getLowestTemperature(WeatherConstants.DayOfWeek.AFTER_TOMORROW),
+                    temperatureIndicator,
+                    request.getLowestTemperature(WeatherConstants.DayOfWeek.AFTER_AFTER_TOMORROW),
+                    temperatureIndicator,
+                    request.getCurrentTemperature(),
+                    temperatureIndicator);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Cannot format report for city " + cityName + "!");
+        }
+    }
+
+    private void saveReport(String cityName, String reportString) throws RuntimeException {
+        try {
+            FileManager.createNewFile(cityName + ".txt");
+            FileManager.writeContents(cityName + ".txt",
+                    reportString.replace("\n", "\r\n"), false, false);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Cannot save report for city " + cityName + "!");
+        }
+    }
+
+    public void getReport() throws RuntimeException {
         String temperatureIndicator = (this.currentFormat == WeatherConstants.TemperatureFormat.CELSIUS) ?
                 " °C" : (this.currentFormat == WeatherConstants.TemperatureFormat.FAHRENHEIT ? " °F" : "");
         System.out.println("Koostan raportid, palun oodake...");
 
         for (int i = 0; i < allCities.length; i++) {
-            LocalDateTime currentDate = LocalDateTime.now();
-            String cityName = allCities[i];
-            request.setCity(cityName);
             try {
-                String[] coordinates = request.getGeoCoordinates().split(":");
-                coordinates[1] = (coordinates[1].charAt(0) == '0') ? coordinates[1].substring(1) : coordinates[1];
-                String resultReport = String.format("Ilma raport -- %s:\n\t- Linn: %s\n" +
-                                "\t- Linna koordinaadid: lat %s lon %s\n" +
-                                "\t- Maksimaalne temperatuur:\n\t\t- Homme: %.2f%s\n\t\t- Ülehomme: %.2f%s\n" +
-                                "\t\t- Üleülehomme: %.2f%s\n\t- Minimaalne temperatuur:\n\t\t- Homme: %.2f%s\n" +
-                                "\t\t- Ülehomme: %.2f%s\n\t\t- Üleülehomme: %.2f%s\n\t- Praegune temperatuur: %.2f%s\n",
-                        currentDate.format(DateTimeFormatter.ofPattern("d MMM YYYY HH:mm:ss")),
-                        cityName, coordinates[0], coordinates[1],
-                        request.getHighestTemperature(WeatherConstants.DayOfWeek.TOMORROW),
-                        temperatureIndicator,
-                        request.getHighestTemperature(WeatherConstants.DayOfWeek.AFTER_TOMORROW),
-                        temperatureIndicator,
-                        request.getHighestTemperature(WeatherConstants.DayOfWeek.AFTER_AFTER_TOMORROW),
-                        temperatureIndicator,
-                        request.getLowestTemperature(WeatherConstants.DayOfWeek.TOMORROW),
-                        temperatureIndicator,
-                        request.getLowestTemperature(WeatherConstants.DayOfWeek.AFTER_TOMORROW),
-                        temperatureIndicator,
-                        request.getLowestTemperature(WeatherConstants.DayOfWeek.AFTER_AFTER_TOMORROW),
-                        temperatureIndicator,
-                        request.getCurrentTemperature(),
-                        temperatureIndicator);
+                String resultReport = formatReport(allCities[i], temperatureIndicator);
                 System.out.println(resultReport);
-                FileManager.createNewFile(cityName + ".txt");
-                FileManager.writeContents(cityName + ".txt",
-                        resultReport.replace("\n", "\r\n"), false, false);
+                saveReport(allCities[i], resultReport);
             } catch (RuntimeException e) {
-                System.out.println("Rapordi koostamise ajal oli viga: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }

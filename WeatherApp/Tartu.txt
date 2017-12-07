@@ -1,4 +1,4 @@
-Ilma raport -- 7 dets 2017 08:41:00:
+Ilma raport -- 7 dets 2017 08:54:11:
 	- Linn: Tartu
 	- Linna koordinaadid: lat 58.3727 lon 26.7238
 	- Maksimaalne temperatuur:
