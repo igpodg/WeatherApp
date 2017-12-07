@@ -12,7 +12,7 @@ public class WeatherReport {
     private WeatherConstants.TemperatureFormat currentFormat;
     private String[] allCities;
 
-    private String[] getCityFromConsoleOrInput() {
+    private String[] getCityFromConsoleOrInput() throws RuntimeException {
         try {
             File inputFile = FileManager.getFileByName("input.txt");
             String loadedCities = FileManager.loadContents(inputFile);
@@ -46,7 +46,7 @@ public class WeatherReport {
         request.setTemperatureFormat(currentFormat);
     }
 
-    public void printAndSaveReport() {
+    public void printAndSaveReport() throws RuntimeException {
         String temperatureIndicator = (this.currentFormat == WeatherConstants.TemperatureFormat.CELSIUS) ?
                 " °C" : (this.currentFormat == WeatherConstants.TemperatureFormat.FAHRENHEIT ? " °F" : "");
         System.out.println("Koostan raportid, palun oodake...");

@@ -11,7 +11,7 @@ import java.util.Optional;
 public class CountryFormatter {
     private HashMap<String,String> countryList;
 
-    public CountryFormatter(String fileName) {
+    public CountryFormatter(String fileName) throws RuntimeException {
         this.countryList = new HashMap<>();
 
         try {

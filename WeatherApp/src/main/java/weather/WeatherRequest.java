@@ -27,7 +27,7 @@ public class WeatherRequest {
         return !(this.currentCity == null || this.currentCity.isEmpty());
     }
 
-    private void ensureCityIsDefined() {
+    private void ensureCityIsDefined() throws RuntimeException {
         if (!isCityDefined()) {
             throw new RuntimeException("City not defined!");
         }
@@ -48,7 +48,7 @@ public class WeatherRequest {
         return this.currentCity;
     }
 
-    public void setTemperatureFormat(WeatherConstants.TemperatureFormat format) {
+    public void setTemperatureFormat(WeatherConstants.TemperatureFormat format) throws RuntimeException {
         try {
             this.format = format;
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class WeatherRequest {
         return TempConverter.getTemperatureInFormat(this.format, kelvinTemp);
     }
 
-    public double getCurrentTemperature() {
+    public double getCurrentTemperature() throws RuntimeException {
         ensureCityIsDefined();
         double kelvinTemp = getDoubleFromAPI(CURRENT_WEATHER, "main,temp", false, null);
         if (Double.isNaN(kelvinTemp)) {
@@ -94,7 +94,8 @@ public class WeatherRequest {
         return getTemperatureInCurrentFormat(kelvinTemp);
     }
 
-    private double getLeveledTemperature(WeatherConstants.DayOfWeek day, WeatherConstants.TemperatureLevel level) {
+    private double getLeveledTemperature(WeatherConstants.DayOfWeek day, WeatherConstants.TemperatureLevel level)
+            throws RuntimeException {
         ensureCityIsDefined();
         LocalDateTime currentDate = LocalDateTime.now();
         switch (day) {
@@ -119,7 +120,7 @@ public class WeatherRequest {
         return getTemperatureInCurrentFormat(answer);
     }
 
-    public double getHighestTemperature(WeatherConstants.DayOfWeek day) {
+    public double getHighestTemperature(WeatherConstants.DayOfWeek day) throws RuntimeException {
         try {
             return getLeveledTemperature(day, WeatherConstants.TemperatureLevel.HIGHEST);
         } catch (Exception e) {
@@ -128,7 +129,7 @@ public class WeatherRequest {
         }
     }
 
-    public double getLowestTemperature(WeatherConstants.DayOfWeek day) {
+    public double getLowestTemperature(WeatherConstants.DayOfWeek day) throws RuntimeException {
         try {
             return getLeveledTemperature(day, WeatherConstants.TemperatureLevel.LOWEST);
         } catch (Exception e) {
@@ -137,7 +138,7 @@ public class WeatherRequest {
         }
     }
 
-    public String getGeoCoordinates() {
+    public String getGeoCoordinates() throws RuntimeException {
         ensureCityIsDefined();
         try {
             double latitude = getDoubleFromAPI(

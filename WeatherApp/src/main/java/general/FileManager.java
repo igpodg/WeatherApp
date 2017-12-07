@@ -9,7 +9,7 @@ public class FileManager {
         return new File(Paths.get(".").toAbsolutePath().normalize().toString() + "/" + name);
     }
 
-    public static File getFileByName(String name) {
+    public static File getFileByName(String name) throws RuntimeException {
         File file = getFileObject(name);
         if (!(name != null && file.exists() && !file.isDirectory())) {
             throw new RuntimeException("Cannot load file!");
@@ -18,7 +18,7 @@ public class FileManager {
         return file;
     }
 
-    public static void createNewFile(String name) {
+    public static void createNewFile(String name) throws RuntimeException {
         try {
             getFileObject(name).createNewFile();
         } catch (Exception e) {
@@ -26,7 +26,8 @@ public class FileManager {
         }
     }
 
-    public static void writeContents(String name, String contents, boolean useLines, boolean append) {
+    public static void writeContents(String name, String contents, boolean useLines, boolean append)
+            throws RuntimeException {
         try {
             PrintWriter writer = new PrintWriter(new FileOutputStream(name, append));
             if (useLines) {
@@ -40,7 +41,7 @@ public class FileManager {
         }
     }
 
-    public static String loadContents(File file) {
+    public static String loadContents(File file) throws RuntimeException {
         try {
             return new Scanner(file).useDelimiter("\\Z").next();
         } catch (Exception e) {

@@ -20,7 +20,7 @@ public class HttpUtility {
         return null;
     }
 
-    public static void makeGetRequest(HttpURLConnection con) {
+    public static void makeGetRequest(HttpURLConnection con) throws RuntimeException {
         try {
             int currentResponse = con.getResponseCode();
             if (currentResponse == HTTP_CODE_NOTFOUND) {
@@ -34,7 +34,7 @@ public class HttpUtility {
         }
     }
 
-    public static String putDataToString(HttpURLConnection con) {
+    public static String putDataToString(HttpURLConnection con) throws RuntimeException {
         try {
             Scanner scanner = new Scanner(con.getInputStream()).useDelimiter("\\A");
             return scanner.hasNext() ? scanner.next() : "";
@@ -45,7 +45,7 @@ public class HttpUtility {
         throw new RuntimeException("GET request not made before conversion!");
     }
 
-    public static void closeUrlConnection(HttpURLConnection con) {
+    public static void closeUrlConnection(HttpURLConnection con) throws RuntimeException {
         try {
             con.disconnect();
         } catch (Exception e) {

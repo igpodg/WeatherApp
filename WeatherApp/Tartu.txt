@@ -1,12 +1,12 @@
-Ilma raport -- 7 Dec 2017 01:03:46:
+Ilma raport -- 7 dets 2017 08:32:07:
 	- Linn: Tartu
 	- Linna koordinaadid: lat 58.3727 lon 26.7238
 	- Maksimaalne temperatuur:
-		- Homme: 36.88 °F
-		- Ülehomme: 35.50 °F
-		- Üleülehomme: 29.99 °F
+		- Homme: 36,88 °F
+		- Ülehomme: 35,50 °F
+		- Üleülehomme: 29,99 °F
 	- Minimaalne temperatuur:
-		- Homme: 36.88 °F
-		- Ülehomme: 35.50 °F
-		- Üleülehomme: 29.99 °F
-	- Praegune temperatuur: 26.60 °F
+		- Homme: 36,88 °F
+		- Ülehomme: 35,50 °F
+		- Üleülehomme: 29,99 °F
+	- Praegune temperatuur: 23,00 °F

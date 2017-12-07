@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class TempConverter {
-    public static double convertToFahrenheit(double kelvinTemp) {
+    public static double convertToFahrenheit(double kelvinTemp) throws RuntimeException {
         try {
             return ((kelvinTemp - 273.15) * 9 / 5) + 32;
         } catch (Exception e) {
@@ -14,7 +14,7 @@ public class TempConverter {
         }
     }
 
-    public static double convertToCelsius(double kelvinTemp) {
+    public static double convertToCelsius(double kelvinTemp) throws RuntimeException {
         try {
             return kelvinTemp - 273.15;
         } catch (Exception e) {
@@ -22,7 +22,8 @@ public class TempConverter {
         }
     }
 
-    public static double getTemperatureInFormat(WeatherConstants.TemperatureFormat format, double kelvinTemp) {
+    public static double getTemperatureInFormat(WeatherConstants.TemperatureFormat format, double kelvinTemp)
+            throws RuntimeException {
         if (format == WeatherConstants.TemperatureFormat.CELSIUS) {
             return new BigDecimal(convertToCelsius(kelvinTemp))
                     .setScale(10, RoundingMode.HALF_UP).doubleValue();

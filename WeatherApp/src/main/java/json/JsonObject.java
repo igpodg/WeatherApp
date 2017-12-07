@@ -8,7 +8,7 @@ import org.json.simple.parser.ParseException;
 public class JsonObject {
     private String json;
 
-    public static JsonObject getJsonObject(String json) {
+    public static JsonObject getJsonObject(String json) throws RuntimeException {
         if (JsonValidator.checkJsonCorrect(json)) {
             return new JsonObject(json);
         } else {
@@ -20,7 +20,7 @@ public class JsonObject {
         this.json = json;
     }
 
-    public String[] getValuesByKey(String key) {
+    public String[] getValuesByKey(String key) throws RuntimeException {
         String[] allValues;
         if (key.contains(",")) {
             allValues = key.split(",");
@@ -61,7 +61,7 @@ public class JsonObject {
         return getValuesByKey(key)[0];
     }
 
-    public String getValueByKey(String key, int occurence) {
+    public String getValueByKey(String key, int occurence) throws RuntimeException {
         try {
             return getValuesByKey(key)[occurence];
         } catch (Exception e) {
@@ -69,7 +69,7 @@ public class JsonObject {
         }
     }
 
-    public int getValueByKeyInt(String key) {
+    public int getValueByKeyInt(String key) throws RuntimeException {
         try {
             return Integer.parseInt(getValueByKey(key));
         } catch (NumberFormatException e) {
@@ -77,7 +77,7 @@ public class JsonObject {
         }
     }
 
-    public double getValueByKeyDouble(String key) {
+    public double getValueByKeyDouble(String key) throws RuntimeException {
         try {
             return Double.parseDouble(getValueByKey(key));
         } catch (NumberFormatException e) {
