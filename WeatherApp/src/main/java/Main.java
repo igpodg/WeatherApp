@@ -11,8 +11,8 @@ public class Main {
         /*WeatherRequest request = new WeatherRequest("fbbf4f7271272d04a548efe35b69c3cf",
                 WeatherConstants.TemperatureFormat.CELSIUS);
         System.out.println(request.getCurrentTemperature());*/
-        //String[] cities = {"Tallinn", "Tartu", "Paide"};
-        String[] cities = null;
+        String[] cities = {"Tallinn", "Tartu", "Paide"};
+        //String[] cities = null;
         WeatherReport report = new WeatherReport(new WeatherRequest(new HttpUtility(),
                 "fbbf4f7271272d04a548efe35b69c3cf",
                 WeatherConstants.TemperatureFormat.CELSIUS), cities, LocalDateTime::now, null);

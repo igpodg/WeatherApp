@@ -67,7 +67,7 @@ public class WeatherRequest {
 
         String jsonString = this.httpUtility.putDataToString(connection);
         this.httpUtility.closeUrlConnection(connection);
-        System.out.println("jsonString: " + jsonString);
+        //System.out.println("jsonString: " + jsonString);
         JsonObject jsonObject = JsonObject.getJsonObject(jsonString);
         if (useDate) {
             int iterator = 0;
