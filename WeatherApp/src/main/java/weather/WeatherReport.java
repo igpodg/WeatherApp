@@ -5,17 +5,22 @@ import general.FileManager;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 public class WeatherReport {
     private WeatherRequest request;
     private WeatherConstants.TemperatureFormat currentFormat;
     private String[] allCities;
+    private Supplier<LocalDateTime> dateTimeGetter;
+    private FileManager fileManager;
 
     private String[] getCityFromConsoleOrInput() throws RuntimeException {
         try {
-            File inputFile = FileManager.getFileByName("input.txt");
-            String loadedCities = FileManager.loadContents(inputFile);
+            this.fileManager.setName("input.txt");
+            File inputFile = this.fileManager.getFileByName();
+            String loadedCities = new FileManager(inputFile).loadContents();
             loadedCities = loadedCities.replace("\r\n", "\n");
             return loadedCities.split("\n");
         } catch (RuntimeException e) {
@@ -26,7 +31,7 @@ public class WeatherReport {
                 System.out.print("Please enter city: ");
                 String[] inputCity = new String[1];
                 inputCity[0] = scanner.nextLine();
-                FileManager.writeContents("input.txt", inputCity[0], true, true);
+                this.fileManager.writeContents(inputCity[0], true, true);
                 return inputCity;
             } else {
                 throw new RuntimeException("Cannot get city from console!");
@@ -34,10 +39,14 @@ public class WeatherReport {
         }
     }
 
-    public WeatherReport(WeatherRequest request, String[] cities) {
+    public WeatherReport(WeatherRequest request, String[] cities,
+                         Supplier<LocalDateTime> dateTimeGetter, FileManager fileManager) {
         this.request = request;
         this.currentFormat = WeatherConstants.TemperatureFormat.CELSIUS;
         request.setTemperatureFormat(currentFormat);
+
+        this.dateTimeGetter = dateTimeGetter;
+        this.fileManager = (fileManager == null) ? new FileManager("") : fileManager;
         this.allCities = (cities == null || cities.length == 0) ? getCityFromConsoleOrInput() : cities;
     }
 
@@ -47,7 +56,7 @@ public class WeatherReport {
     }
 
     private String formatReport(String cityName, String temperatureIndicator) throws RuntimeException {
-        LocalDateTime currentDate = LocalDateTime.now();
+        LocalDateTime currentDate = this.dateTimeGetter.get();
         request.setCity(cityName);
         try {
             String[] coordinates = request.getGeoCoordinates().split(":");
@@ -57,7 +66,7 @@ public class WeatherReport {
                             "\t- Maksimaalne temperatuur:\n\t\t- Homme: %.2f%s\n\t\t- Ülehomme: %.2f%s\n" +
                             "\t\t- Üleülehomme: %.2f%s\n\t- Minimaalne temperatuur:\n\t\t- Homme: %.2f%s\n" +
                             "\t\t- Ülehomme: %.2f%s\n\t\t- Üleülehomme: %.2f%s\n\t- Praegune temperatuur: %.2f%s\n",
-                    currentDate.format(DateTimeFormatter.ofPattern("d MMM YYYY HH:mm:ss")),
+                    currentDate.format(DateTimeFormatter.ofPattern("d MMM YYYY HH:mm:ss", Locale.ROOT)),
                     cityName, coordinates[0], coordinates[1],
                     request.getHighestTemperature(WeatherConstants.DayOfWeek.TOMORROW),
                     temperatureIndicator,
@@ -80,27 +89,33 @@ public class WeatherReport {
 
     private void saveReport(String cityName, String reportString) throws RuntimeException {
         try {
-            FileManager.createNewFile(cityName + ".txt");
-            FileManager.writeContents(cityName + ".txt",
-                    reportString.replace("\n", "\r\n"), false, false);
+            this.fileManager.setName(cityName + ".txt");
+            this.fileManager.createNewFile();
+            this.fileManager.writeContents(reportString.replace(
+                    "\n", "\r\n"), false, false);
         } catch (RuntimeException e) {
             throw new RuntimeException("Cannot save report for city " + cityName + "!");
         }
     }
 
-    public void getReport() throws RuntimeException {
+    public String getReport() throws RuntimeException {
         String temperatureIndicator = (this.currentFormat == WeatherConstants.TemperatureFormat.CELSIUS) ?
                 " °C" : (this.currentFormat == WeatherConstants.TemperatureFormat.FAHRENHEIT ? " °F" : "");
         System.out.println("Koostan raportid, palun oodake...");
 
+        String allReports = "";
         for (int i = 0; i < allCities.length; i++) {
+            if (allCities[i].isEmpty()) {
+                continue;
+            }
             try {
                 String resultReport = formatReport(allCities[i], temperatureIndicator);
-                System.out.println(resultReport);
+                allReports += "\n" + resultReport;
                 saveReport(allCities[i], resultReport);
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }
         }
+        return allReports;
     }
 }

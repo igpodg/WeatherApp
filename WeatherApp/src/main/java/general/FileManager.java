@@ -5,12 +5,28 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class FileManager {
-    private static File getFileObject(String name) {
-        return new File(Paths.get(".").toAbsolutePath().normalize().toString() + "/" + name);
+    private String name;
+    private File file;
+
+    public FileManager(String name) {
+        this.name = name;
     }
 
-    public static File getFileByName(String name) throws RuntimeException {
-        File file = getFileObject(name);
+    public FileManager(File file) {
+        this.file = file;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    private File getFileObject() {
+        return (file == null) ?
+                new File(Paths.get(".").toAbsolutePath().normalize().toString() + "/" + name) : file;
+    }
+
+    public File getFileByName() throws RuntimeException {
+        File file = getFileObject();
         if (!(name != null && file.exists() && !file.isDirectory())) {
             throw new RuntimeException("Cannot load file!");
         }
@@ -18,15 +34,15 @@ public class FileManager {
         return file;
     }
 
-    public static void createNewFile(String name) throws RuntimeException {
+    public void createNewFile() throws RuntimeException {
         try {
-            getFileObject(name).createNewFile();
+            getFileObject().createNewFile();
         } catch (Exception e) {
             throw new RuntimeException("Cannot create new file!");
         }
     }
 
-    public static void writeContents(String name, String contents, boolean useLines, boolean append)
+    public void writeContents(String contents, boolean useLines, boolean append)
             throws RuntimeException {
         try {
             PrintWriter writer = new PrintWriter(new FileOutputStream(name, append));
@@ -41,9 +57,9 @@ public class FileManager {
         }
     }
 
-    public static String loadContents(File file) throws RuntimeException {
+    public String loadContents() throws RuntimeException {
         try {
-            return new Scanner(file).useDelimiter("\\Z").next();
+            return new Scanner(getFileObject()).useDelimiter("\\Z").next();
         } catch (Exception e) {
             throw new RuntimeException("Cannot load file contents!");
         }

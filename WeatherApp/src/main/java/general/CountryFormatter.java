@@ -1,7 +1,5 @@
 package general;
 
-import general.FileManager;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,7 +13,7 @@ public class CountryFormatter {
         this.countryList = new HashMap<>();
 
         try {
-            File file = FileManager.getFileByName(fileName);
+            File file = new FileManager(fileName).getFileByName();
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;

@@ -1,0 +1,12 @@
+Ilma raport -- 3 Feb 2001 04:05:06:
+	- Linn: Bigcity
+	- Linna koordinaadid: lat CO.ORDI lon NAT.ES
+	- Maksimaalne temperatuur:
+		- Homme: 10.00 °F
+		- Ülehomme: 20.00 °F
+		- Üleülehomme: 30.00 °F
+	- Minimaalne temperatuur:
+		- Homme: 40.00 °F
+		- Ülehomme: 50.00 °F
+		- Üleülehomme: 60.00 °F
+	- Praegune temperatuur: 70.00 °F

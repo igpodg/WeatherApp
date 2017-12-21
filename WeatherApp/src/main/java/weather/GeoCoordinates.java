@@ -14,7 +14,10 @@ public class GeoCoordinates {
     @Override
     public String toString() {
         // xx.xxxx:yyy.yyyy
-        return String.format(Locale.ROOT, "%07.4f:%08.4f",
-                this.latitude, this.longitude);
+        String latitudeMinus = (this.latitude < 0) ? "-" : "";
+        String longitudeMinus = (this.longitude < 0) ? "-" : "";
+        return String.format(Locale.ROOT, "%s%07.4f:%s%08.4f",
+                latitudeMinus, Math.abs(this.latitude),
+                longitudeMinus, Math.abs(this.longitude));
     }
 }

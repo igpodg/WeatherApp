@@ -1,0 +1,12 @@
+Ilma raport -- 3 Feb 2001 04:05:06:
+	- Linn: INPUTCITY
+	- Linna koordinaadid: lat CO.ORDI lon NAT.ES
+	- Maksimaalne temperatuur:
+		- Homme: 10.00 °C
+		- Ülehomme: 20.00 °C
+		- Üleülehomme: 30.00 °C
+	- Minimaalne temperatuur:
+		- Homme: 40.00 °C
+		- Ülehomme: 50.00 °C
+		- Üleülehomme: 60.00 °C
+	- Praegune temperatuur: 70.00 °C

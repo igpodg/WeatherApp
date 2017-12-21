@@ -1,15 +1,12 @@
 package weather;
 
-import general.FileManager;
 import general.TempConverter;
 import http.HttpUtility;
 import json.JsonObject;
 
-import java.io.File;
 import java.net.HttpURLConnection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 
 public class WeatherRequest {
     private final static String BASE_URL_FORMAT = "http://api.openweathermap.org/data/2.5/%s?q=%s,EE&appid=%s";
@@ -23,6 +20,8 @@ public class WeatherRequest {
     private WeatherConstants.TemperatureFormat format;
     private String currentCity;
 
+    private HttpUtility httpUtility;
+
     private boolean isCityDefined() {
         return !(this.currentCity == null || this.currentCity.isEmpty());
     }
@@ -33,7 +32,8 @@ public class WeatherRequest {
         }
     }
 
-    public WeatherRequest(String apiKey, WeatherConstants.TemperatureFormat defaultFormat) {
+    public WeatherRequest(HttpUtility httpUtility, String apiKey, WeatherConstants.TemperatureFormat defaultFormat) {
+        this.httpUtility = httpUtility;
         this.apiKey = apiKey;
         this.format = defaultFormat;
         this.currentCity = null;
@@ -61,13 +61,13 @@ public class WeatherRequest {
             return Double.NaN;
         }
 
-        HttpURLConnection connection = HttpUtility.makeUrlConnection(
+        HttpURLConnection connection = this.httpUtility.makeUrlConnection(
                 String.format(BASE_URL_FORMAT, weatherString, this.currentCity, this.apiKey));
-        HttpUtility.makeGetRequest(connection);
+        this.httpUtility.makeGetRequest(connection);
 
-        String jsonString = HttpUtility.putDataToString(connection);
-        HttpUtility.closeUrlConnection(connection);
-        //System.out.println("jsonString: " + jsonString);
+        String jsonString = this.httpUtility.putDataToString(connection);
+        this.httpUtility.closeUrlConnection(connection);
+        System.out.println("jsonString: " + jsonString);
         JsonObject jsonObject = JsonObject.getJsonObject(jsonString);
         if (useDate) {
             int iterator = 0;

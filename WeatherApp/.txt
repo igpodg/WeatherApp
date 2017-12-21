@@ -1,0 +1,12 @@
+Ilma raport -- 21 Dec 2017 02:42:30:
+	- Linn: 
+	- Linna koordinaadid: lat CO.ORDI lon NAT.ES
+	- Maksimaalne temperatuur:
+		- Homme: 20.00 °C
+		- Ülehomme: 30.00 °C
+		- Üleülehomme: 40.00 °C
+	- Minimaalne temperatuur:
+		- Homme: 50.00 °C
+		- Ülehomme: 60.00 °C
+		- Üleülehomme: 70.00 °C
+	- Praegune temperatuur: 10.00 °C

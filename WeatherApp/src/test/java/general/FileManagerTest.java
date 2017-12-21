@@ -28,7 +28,7 @@ public class FileManagerTest {
             PrintWriter writer = new PrintWriter("test.txt", "UTF-8");
             writer.println("Hello world");
             writer.close();
-            File file = FileManager.getFileByName("test.txt");
+            File file = new FileManager("test.txt").getFileByName();
             assertEquals("Hello world\n", new String(Files.readAllBytes(file.toPath()))
                     .replace("\r", ""));
         } catch (Exception e) {
@@ -38,21 +38,21 @@ public class FileManagerTest {
 
     @Test (expected = RuntimeException.class)
     public void testGetNonExistingFile() {
-        FileManager.getFileByName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        new FileManager("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").getFileByName();
     }
 
     @Test
     public void testCreateNewFile() {
         new File("test2.txt").delete();
-        FileManager.createNewFile("test2.txt");
+        new FileManager("test2.txt").createNewFile();
         assertTrue(new File("test2.txt").exists());
     }
 
     @Test
     public void testWriteContents() {
         new File("test2.txt").delete();
-        FileManager.createNewFile("test2.txt");
-        FileManager.writeContents("test2.txt", "contents", false, false);
+        new FileManager("test2.txt").createNewFile();
+        new FileManager("test2.txt").writeContents("contents", false, false);
         try {
             assertEquals("contents", new String(Files.readAllBytes(new File("test2.txt").toPath()))
                     .replace("\r", ""));
@@ -64,8 +64,8 @@ public class FileManagerTest {
     @Test
     public void testWriteContentsLines() {
         new File("test2.txt").delete();
-        FileManager.createNewFile("test2.txt");
-        FileManager.writeContents("test2.txt", "contents", true, false);
+        new FileManager("test2.txt").createNewFile();
+        new FileManager("test2.txt").writeContents("contents", true, false);
         try {
             assertEquals("contents\n", new String(Files.readAllBytes(new File("test2.txt").toPath()))
                     .replace("\r", ""));
@@ -77,9 +77,9 @@ public class FileManagerTest {
     @Test
     public void testWriteContentsNoAppend() {
         new File("test2.txt").delete();
-        FileManager.createNewFile("test2.txt");
-        FileManager.writeContents("test2.txt", "hello", false, false);
-        FileManager.writeContents("test2.txt", "world", false, false);
+        new FileManager("test2.txt").createNewFile();
+        new FileManager("test2.txt").writeContents("hello", false, false);
+        new FileManager("test2.txt").writeContents("world", false, false);
         try {
             assertEquals("world", new String(Files.readAllBytes(new File("test2.txt").toPath()))
                     .replace("\r", ""));
@@ -91,9 +91,9 @@ public class FileManagerTest {
     @Test
     public void testWriteContentsAppend() {
         new File("test2.txt").delete();
-        FileManager.createNewFile("test2.txt");
-        FileManager.writeContents("test2.txt", "hello", false, true);
-        FileManager.writeContents("test2.txt", "world", false, true);
+        new FileManager("test2.txt").createNewFile();
+        new FileManager("test2.txt").writeContents("hello", false, true);
+        new FileManager("test2.txt").writeContents("world", false, true);
         try {
             assertEquals("helloworld", new String(Files.readAllBytes(new File("test2.txt").toPath()))
                     .replace("\r", ""));
@@ -109,8 +109,8 @@ public class FileManagerTest {
             out.println("random string!!!");
             out.close();
 
-            File file = FileManager.getFileByName("randomfile.txt");
-            String loadedContents = FileManager.loadContents(file);
+            File file = new FileManager("randomfile.txt").getFileByName();
+            String loadedContents = new FileManager(file).loadContents();
             assertEquals("random string!!!", loadedContents);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -120,7 +120,7 @@ public class FileManagerTest {
 
     @Test (expected = RuntimeException.class)
     public void testLoadContentsNoFile() {
-        File file = FileManager.getFileByName("nofile.txt");
-        FileManager.loadContents(file);
+        File file = new FileManager("nofile.txt").getFileByName();
+        new FileManager(file).loadContents();
     }
 }
